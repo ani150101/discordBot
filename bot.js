@@ -7,6 +7,7 @@ client.login(process.env.BOT_TOKEN);
 
 client.on('ready', () => {
     console.log("Baby is up..\n----------\nPrefix: !\n\n");
+    discord
 })
 
 const isValidCommand = (message, cmdName) => message.content.toLowerCase().startsWith(PREFIX + cmdName);
