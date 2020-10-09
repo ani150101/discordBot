@@ -1,6 +1,6 @@
 require('dotenv').config();
 const discord = require("discord.js");
-const { richEmbed, normalEmbed } = require('./embed.js');
+const { richEmbed, normalEmbed, dmEmbed } = require('./embed.js');
 const client = new discord.Client();
 const PREFIX = process.env.PREFIX;
 const BRIGHT_RED = '#ed0909'
@@ -44,7 +44,7 @@ client.on('message', (message) => {
                 {name: `add, a`, value: `Add a role to a user.\n\`\`${PREFIX}add <role name/mention> <member>\`\``, inline: false},
                 {name: `remove, r`, value: `Remove a role from user.\n\`\`${PREFIX}remove <role name/mention> <member>\`\``, inline: false},
                 {name: `user`, value: `Gets a user's information.\n\`\`${PREFIX}user / ${PREFIX}user <member>\`\``, inline: false},
-                {name: `mute`, value: `Mutes a member in the server.\n\`\`${PREFIX}ban <member> <time> <reason>\`\``, inline: false},
+                {name: `mute`, value: `Mutes a member in the server.\n\`\`${PREFIX}mute <member> <time> <reason>\`\``, inline: false},
                 {name: `unmute`, value: `Unmutes a member in the server.\n\`\`${PREFIX}ban <member>\`\``, inline: false},
                 {name: `kick`, value: `Kick a member from the server.\n\`\`${PREFIX}kick <member> <reason>\`\``, inline: false},
                 {name: `ban`, value: `Bans a member from the server.\n\`\`${PREFIX}ban <member> <reason>\`\``, inline: false},
@@ -190,22 +190,50 @@ client.on('message', (message) => {
         }
     }
     else if(isValidCommand(message, "kick")) {
-        let memberID;
-        let args = message.content.split(' ')[1];
-        if(args) {
-            if(message.mentions.members.first()) { //!kick @coco
-                memberID = message.mentions.members.first().id;
-                
+        let args = message.content.substring(PREFIX.length).split(" ");
+        if(args.length > 1) var memberId = args[1].match(/[0-9]+/)[0];
+        if(args.length > 2) var reason = args.slice(2).join(' ');
+        // let member = message.guild.members.cache.find(Member => Member.id === memberId);
+        if(memberId) {
+            let member = message.guild.members.cache.find(Member => Member.id === memberId);
+            if(!member) {
+                normalEmbed(message, ":x: Member not present in the server", BRIGHT_RED);
+                return;
             }
-            else if(parseInt(args)) { //!kick 9012381239939
-                memberID = args[1];
+            if(!member.kickable) {
+                normalEmbed(message, `:exclamation: Cannot kick <@!${memberId}>\n_Member has kick permission!_`, BRIGHT_RED);
+                return;
             }
-            else {
-                normalEmbed(message, ":x: Invalid member!");
-            }
+            dmEmbed(message, member, `Reason: ${reason?reason:'No reason provided'}`, `You were kicked from ${message.guild.name} Server`, false, true)
+                .then(member.kick(reason));
+            normalEmbed(message, `:white_check_mark: ${member.user.tag} kicked!\n**Reason:** ${reason?reason:'No reason provided'}`, BRIGHT_GREEN);
         }
         else {
-            normalEmbed(message, ":x: Please include a member name/id/mention!");
+            normalEmbed(message, ":x: Please include <member id/mention>", BRIGHT_RED);
+        }
+    }
+
+    else if(isValidCommand(message, "ban")) {
+        let args = message.content.substring(PREFIX.length).split(" ");
+        if(args.length > 1) var memberId = args[1].match(/[0-9]+/)[0];
+        if(args.length > 2) var reason = args.slice(2).join(' ');
+        // let member = message.guild.members.cache.find(Member => Member.id === memberId);
+        if(memberId) {
+            let member = message.guild.members.cache.find(Member => Member.id === memberId);
+            if(!member) {
+                normalEmbed(message, ":x: Member not present in the server", BRIGHT_RED);
+                return;
+            }
+            if(!member.bannable) {
+                normalEmbed(message, `:exclamation: Cannot ban <@!${memberId}>\n_Member has ban permission!_`, BRIGHT_RED);
+                return;
+            }
+            dmEmbed(message, member, `Reason: ${reason?reason:'No reason provided'}`, `You were banned from ${message.guild.name} Server`, false, true)
+                .then(member.ban({reason: reason}));
+            normalEmbed(message, `:white_check_mark: ${member.user.tag} Banned!\n**Reason:** ${reason?reason:'No reason provided'}`, BRIGHT_GREEN);
+        }
+        else {
+            normalEmbed(message, ":x: Please include <member id/mention>", BRIGHT_RED);
         }
     }
 })
