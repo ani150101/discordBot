@@ -1,7 +1,8 @@
 require('dotenv').config();
-const discord = require("discord.js");
+const discord = require("discord.js");  
 const { richEmbed, normalEmbed, dmEmbed } = require('./embed.js');
 const client = new discord.Client();
+const api = new discord.APIMessage();
 const PREFIX = process.env.PREFIX;
 const BRIGHT_RED = '#ed0909'
 const BRIGHT_GREEN = '#03b500'
@@ -56,7 +57,7 @@ client.on('message', (message) => {
 
     else if(isValidCommand(message, "user")) {
         let user;
-
+        let userFields;
         const userInfoEmbed = (user, message) => {
             let createdDate = `${user.user.createdAt.toDateString().substring(4)}`;
             let joinedDate = `${user.guild.joinedAt.toDateString().substring(4)}`;
@@ -64,34 +65,36 @@ client.on('message', (message) => {
             let activities = user.presence.activities[0];
             let presence = () => {
                 let arr = new Array();
+                try {
                     (user.presence.clientStatus.desktop)?arr.push('Desktop'):false;
                     (user.presence.clientStatus.mobile)?arr.push('Mobile'):false;
                     (user.presence.clientStatus.web)?arr.push('Web'):false;
                     return arr;
+                } catch (err) {
+                    arr.push('Offline');
+                }
             };
-            //console.log(user.presence.clientStatus);
-            let userFields = [
-                {name: 'ID', value: user.user.id, inline: true},
-                {name: 'Nickname', value: (user.nickname)?user.nickname:'\u200B', inline: true},
-                {name: '\u200B', value: '\u200B', inline: true},
-                {name: 'Presence', value: presence().toString(), inline: true},
-                {name: 'Status', value: user.presence.status, inline: true},
-                {name: '\u200B', value: '\u200B', inline: true},
-                {name: 'Created', value: createdDate, inline: true},
-                {name: 'Joined', value: joinedDate, inline: true},
-                {name: 'Highest Role', value: user.roles.highest.toString(), inline: true},   
-            ]
+                userFields = [
+                    {name: 'ID', value: user.user.id, inline: false},
+                    {name: 'Nickname', value: (user.nickname)?user.nickname:'None set', inline: false},
+                    // {name: '\u200B', value: '\u200B', inline: true},
+                    {name: 'Presence', value: presence().toString()?presence().toString():'None', inline: true},
+                    {name: 'Status', value: user.presence.status, inline: true},
+                    {name: 'Highest Role', value: user.roles.highest.toString(), inline: false}, 
+                    // {name: '\u200B', value: '\u200B', inline: true},
+                    {name: 'Created', value: createdDate, inline: true},
+                    {name: 'Joined', value: joinedDate, inline: true},  
+                ]
             if(activities) {
                 activityType = activities.type.charAt(0) + activities.type.toLowerCase().slice(1); //Capitalize
                 if(activities.details) {
-                    if(activities.state) userFields.push({name: `${activityType} ${activities.name}`, value: `${activities.details}, ${activities.state}`})
-                    else userFields.push({name: `${activityType} ${activities.name}`, value: activities.details})
+                    if(activities.state) userFields.push({name: `${activityType} ${activities.name}`, value: `${activities.details}, ${activities.state}`, inline: false})
+                    else userFields.push({name: `${activityType} ${activities.name}`, value: activities.details, inline: false})
                 }
-                else userFields.push({name: `${activityType} ${activities.name}`, value: '\u200B'});
+                else userFields.push({name: `${activityType} ${activities.name}`, value: '\u200B', inline: false});
             }
             richEmbed(message, `<@!${user.user.id}> (${user.user.tag})`,false, false, true, user.user.displayAvatarURL(), userFields);
         };
-
         if(user = message.mentions.members.first()) {
             user = message.mentions.members.first();
             userInfoEmbed(user, message);
@@ -195,45 +198,67 @@ client.on('message', (message) => {
         if(args.length > 2) var reason = args.slice(2).join(' ');
         // let member = message.guild.members.cache.find(Member => Member.id === memberId);
         if(memberId) {
-            let member = message.guild.members.cache.find(Member => Member.id === memberId);
+            // let member = message.guild.members.cache.find(Member => Member.id === memberId);
+            let member = message.guild.members.resolve(memberId);
             if(!member) {
-                normalEmbed(message, ":x: Member not present in the server", BRIGHT_RED);
+                normalEmbed(message, ":x: Member not present in the server\n_Please provide a valid ID/@mention_", BRIGHT_RED);
                 return;
             }
             if(!member.kickable) {
                 normalEmbed(message, `:exclamation: Cannot kick <@!${memberId}>\n_Member has kick permission!_`, BRIGHT_RED);
                 return;
             }
-            dmEmbed(message, member, `Reason: ${reason?reason:'No reason provided'}`, `You were kicked from ${message.guild.name} Server`, false, true)
-                .then(member.kick(reason));
+            let dm = dmEmbed(message, member, `Reason: \`\`${reason?reason:'No reason provided'}\`\``, `You were kicked from ${message.guild.name} Server`, false, true);
+            member.send(dm).then(function(){
+                member.kick(reason);
+                console.log(`Successfully sent kick message to ${member.user.tag}`);
+            }).catch(function(){
+               member.kick(reason);
+                console.log(`Could not send kick message to ${member.user.tag}`);
+            });
             normalEmbed(message, `:white_check_mark: ${member.user.tag} kicked!\n**Reason:** ${reason?reason:'No reason provided'}`, BRIGHT_GREEN);
         }
         else {
-            normalEmbed(message, ":x: Please include <member id/mention>", BRIGHT_RED);
+            normalEmbed(message, `:x: Please include <member id/mention>\n\u200B\nSyntax: \`\`${PREFIX}kick <member> <reason>\`\``, BRIGHT_RED);
         }
     }
 
     else if(isValidCommand(message, "ban")) {
         let args = message.content.substring(PREFIX.length).split(" ");
-        if(args.length > 1) var memberId = args[1].match(/[0-9]+/)[0];
-        if(args.length > 2) var reason = args.slice(2).join(' ');
+        try {
+            if(args.length > 1) var memberId = args[1].match(/[0-9]+/)[0];
+            if(args.length > 2) var reason = args.slice(2).join(' ');
+        } catch (error) {
+            normalEmbed(message, `:exclamation: Please provide a valid ID/@mention`, BRIGHT_RED);
+            return;
+        }
+        
         // let member = message.guild.members.cache.find(Member => Member.id === memberId);
         if(memberId) {
-            let member = message.guild.members.cache.find(Member => Member.id === memberId);
-            if(!member) {
-                normalEmbed(message, ":x: Member not present in the server", BRIGHT_RED);
-                return;
+            // let member = message.guild.members.cache.find(Member => Member.id === memberId);
+            let member = message.guild.members.resolve(memberId);
+            if(member) {
+                if(!member.bannable) {
+                    normalEmbed(message, `:exclamation: Cannot ban <@!${memberId}>\n_Member has ban permission!_`, BRIGHT_RED);
+                    return;
+                }
+                let dm = dmEmbed(message, member, `Reason: \`\`${reason?reason:'No reason provided'}\`\``, `You were banned from ${message.guild.name} Server`, false, true);
+                member.send(dm).then(function(){
+                    // member.ban({reason: reason});
+                    console.log(`Successfully sent ban message to ${member.user.tag}`);
+                }).catch(function(){
+                //    member.ban({reason: reason});
+                    console.log(`Could not send ban message to ${member.user.tag}`);
+                });
+                // normalEmbed(message, ":x: Member not present in the server", BRIGHT_RED);
             }
-            if(!member.bannable) {
-                normalEmbed(message, `:exclamation: Cannot ban <@!${memberId}>\n_Member has ban permission!_`, BRIGHT_RED);
-                return;
+            else {
+                message.guild.members.ban(memberId, {reason: reason});
             }
-            dmEmbed(message, member, `Reason: ${reason?reason:'No reason provided'}`, `You were banned from ${message.guild.name} Server`, false, true)
-                .then(member.ban({reason: reason}));
-            normalEmbed(message, `:white_check_mark: ${member.user.tag} Banned!\n**Reason:** ${reason?reason:'No reason provided'}`, BRIGHT_GREEN);
+            normalEmbed(message, `:white_check_mark: ${member?member.user.tag:memberId} Banned!\n**Reason:** \`\`${reason?reason:'No reason provided'}\`\``, BRIGHT_GREEN);
         }
         else {
-            normalEmbed(message, ":x: Please include <member id/mention>", BRIGHT_RED);
+            normalEmbed(message, `:x: Please include <member id/mention>\n\u200B\nSyntax: \`\`${PREFIX}ban <member> <reason>\`\``, BRIGHT_RED);
         }
     }
 })
