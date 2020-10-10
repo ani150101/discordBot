@@ -2,21 +2,17 @@ require('dotenv').config();
 const discord = require("discord.js");  
 const { richEmbed, normalEmbed, dmEmbed } = require('./embed.js');
 const client = new discord.Client();
-const api = new discord.APIMessage();
+const userManager = new discord.UserManager(client);
 const PREFIX = process.env.PREFIX;
 const BRIGHT_RED = '#ed0909'
 const BRIGHT_GREEN = '#03b500'
 //client.login(process.env.BOT_TOKEN).catch(err => console.log(err));
 client.login(process.env.TEST_TOKEN).catch(err => console.log(err));
-// client.user.setActivity({activity: {name: `babies`}, status: 'dnd'})
-//     .then(console.log("why"))
-//     .catch(console.log("why"));
 client.on('ready', () => {
     console.log("Baby is up..\n----------\nPrefix: !\n\n");
     client.user.setPresence({status: 'dnd', activity: {name: 'my cutie', type: 'WATCHING'}})
         .catch(err => console.log(err));
 })
-
 const isValidCommand = (message, cmdName) => message.content.toLowerCase().startsWith(PREFIX + cmdName);
 const checkMemberPermissions = (member) => member.permissions.has('ADMINISTRATOR') || member.permissions.has('MANAGE_ROLES');
 
@@ -45,6 +41,7 @@ client.on('message', (message) => {
                 {name: `add, a`, value: `Add a role to a user.\n\`\`${PREFIX}add <role name/mention> <member>\`\``, inline: false},
                 {name: `remove, r`, value: `Remove a role from user.\n\`\`${PREFIX}remove <role name/mention> <member>\`\``, inline: false},
                 {name: `user`, value: `Gets a user's information.\n\`\`${PREFIX}user / ${PREFIX}user <member>\`\``, inline: false},
+                {name: `avatar`, value: `Gets a Discord User's tag & avatar.\n\`\`${PREFIX}avatar <discord ID/@mention>\`\``, inline: false},
                 {name: `mute`, value: `Mutes a member in the server.\n\`\`${PREFIX}mute <member> <time> <reason>\`\``, inline: false},
                 {name: `unmute`, value: `Unmutes a member in the server.\n\`\`${PREFIX}ban <member>\`\``, inline: false},
                 {name: `kick`, value: `Kick a member from the server.\n\`\`${PREFIX}kick <member> <reason>\`\``, inline: false},
@@ -104,6 +101,33 @@ client.on('message', (message) => {
             userInfoEmbed(user, message);
         }
     }
+
+    else if(isValidCommand(message, "avatar")) {
+        let args = message.content.substring(PREFIX.length).split(" ");
+        let memberId = args[1]; 
+        
+        try {
+            if(memberId.startsWith('<')) memberId = memberId.slice(3,-1);
+            if(memberId.length < 18 || memberId.search(/[a-z]/i) > -1) {
+                normalEmbed(message, `Please provide a valid ID (18-digit number)\n\u200B\nSyntax: \`\`${PREFIX}avatar <discord user ID>\`\``, )
+                return;
+            }
+            else {
+                userManager.fetch(memberId, false, true)
+                    .then(response => {
+                        richEmbed(message, false, `${response.tag} (${memberId})`, false, false, false, false, 'RANDOM', response.displayAvatarURL({format: 'png', dynamic: true, size: 4096}));
+                    })
+                    .catch(err => {
+                        normalEmbed(message, `${memberId} does not match a Discord User.`);
+                        return;
+                    });
+            }
+        } catch (err) {
+            normalEmbed(message, `Please provide ID as an argument (18-digit number)\n\u200B\nSyntax: \`\`${PREFIX}avatar <discord user ID>\`\``);
+            return;
+        }
+    }
+
 
     else if(isValidCommand(message, "add") || isValidCommand(message, "a")) {
         let role, roleId;
