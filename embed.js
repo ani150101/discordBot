@@ -23,7 +23,7 @@ const normalEmbed = (message, description, color, title, titleUrl) => {
     if(titleUrl) embed.setURL(titleurl);
     message.channel.send(embed);
 }
-async function dmEmbed (message, member, description, title, titleUrl, authorBool, thumbnailUrl, fields, color, imageUrl) {
+const dmEmbed = (message, member, description, title, titleUrl, authorBool, thumbnailUrl, fields, color, imageUrl) => {
     let embed = new discord.MessageEmbed();
     embed.setFooter('Developed by Robot & Coco', message.guild.iconURL());
     embed.setTimestamp();
@@ -36,7 +36,7 @@ async function dmEmbed (message, member, description, title, titleUrl, authorBoo
     if(color) {embed.setColor(color);}
     else {embed.setColor("#b33030");}
     if(imageUrl) embed.setImage(imageUrl);
-    member.send(embed);
+    return embed;
 };
 
 module.exports = {
