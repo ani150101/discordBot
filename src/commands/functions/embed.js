@@ -1,4 +1,7 @@
+const BRIGHT_RED = '#ed0909'
+const BRIGHT_GREEN = '#03b500'
 const discord = require('discord.js');
+
 const richEmbed = (message, description, title, titleUrl, authorBool, thumbnailUrl, fields, color, imageUrl) => {
     let embed = new discord.MessageEmbed();
     embed.setFooter('Developed by Robot & Coco', message.guild.iconURL());
@@ -22,8 +25,8 @@ const normalEmbed = (message, description, color, title, titleUrl) => {
     if(title) embed.setTitle(title);
     if(titleUrl) embed.setURL(titleurl);
     message.channel.send(embed);
-}
-const dmEmbed = (message, member, description, title, titleUrl, authorBool, thumbnailUrl, fields, color, imageUrl) => {
+};
+const dmEmbed = (message, description, title, titleUrl, authorBool, thumbnailUrl, fields, color, imageUrl) => {
     let embed = new discord.MessageEmbed();
     embed.setFooter('Developed by Robot & Coco', message.guild.iconURL());
     embed.setTimestamp();
