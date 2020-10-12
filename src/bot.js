@@ -28,10 +28,13 @@ client.on('message', (message) => {
     const args = message.content.slice(process.env.PREFIX.length).trim().split(/ +/);
     const cmdName = args.shift().toLowerCase();
 
+    ////////////////////////////////////////////////////////// COMMENT THESE 3 LINES BELOW ////////////////////////////////////////////////////////////////////
+
     const command = client.commands.get(cmdName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(cmdName));
     if(!command) return;
     command.execute(client, message, args);
 
     //////////////////////////////////////////////////////////// TESTING COMMANDS BELOW ///////////////////////////////////////////////////////////////////////
+
     
 })

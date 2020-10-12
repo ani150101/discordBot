@@ -11,8 +11,7 @@ module.exports = {
         let userFields;
         const userInfoEmbed = (user, message) => {
             let createdDate = `${user.user.createdAt.toDateString().substring(4)}`;
-            let joinedDate = `${user.guild.joinedAt.toDateString().substring(4)}`;
-            // let lastMessage = `${user.lastMessage.createdAt.toDateString().substring(4)}`;
+            let joinedDate = `${user.joinedAt.toDateString().substring(4)}`;
             let activities = user.presence.activities[0];
             let presence = () => {
                 let arr = new Array();
@@ -21,18 +20,14 @@ module.exports = {
                     (user.presence.clientStatus.mobile)?arr.push('Mobile'):false;
                     (user.presence.clientStatus.web)?arr.push('Web'):false;
                     return arr;
-                } catch (err) {
-                    arr.push('Offline');
-                }
-            };
+                } catch (err) {}};
+
                 userFields = [
                     {name: 'ID', value: user.user.id, inline: false},
                     {name: 'Nickname', value: (user.nickname)?user.nickname:'None set', inline: false},
-                    // {name: '\u200B', value: '\u200B', inline: true},
-                    {name: 'Presence', value: presence().toString()?presence().toString():'None', inline: true},
+                    {name: 'Presence', value: presence()?presence().toString():'None', inline: true},
                     {name: 'Status', value: user.presence.status, inline: true},
                     {name: 'Highest Role', value: user.roles.highest.toString(), inline: false}, 
-                    // {name: '\u200B', value: '\u200B', inline: true},
                     {name: 'Created', value: createdDate, inline: true},
                     {name: 'Joined', value: joinedDate, inline: true},  
                 ]
@@ -51,7 +46,7 @@ module.exports = {
             userInfoEmbed(user, message);
         }
         else {
-            user = message.member;    //message.guild.members.cache.find(member => member.user.id === message.author.id);
+            user = message.member;
             userInfoEmbed(user, message);
         }
     }
