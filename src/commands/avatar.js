@@ -3,8 +3,8 @@ const { BRIGHT_RED, BRIGHT_GREEN, richEmbed, normalEmbed, dmEmbed } = require('.
 
 module.exports = {
     name: 'avatar',
-    aliases: ['pfp', 'dp', 'search'],
-    description: "Replies with hello back",
+    aliases: ['pfp', 'dp', 'search', 'pic', 'profile'],
+    description: "Gets a random Discord User's avatar from the API",
 
     execute(client, message, args) {
         // let args = message.content.substring(process.env.PREFIX.length).split(" ");

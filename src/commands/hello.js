@@ -3,7 +3,7 @@ const { BRIGHT_RED, BRIGHT_GREEN, richEmbed, normalEmbed, dmEmbed } = require('.
 
 module.exports = {
     name: 'hello',
-    aliases: ['hi', 'hole'],
+    aliases: ['hi', 'hola'],
     description: "Replies with hello back",
 
     execute(client, message, args) {

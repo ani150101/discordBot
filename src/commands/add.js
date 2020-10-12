@@ -3,7 +3,7 @@ const { BRIGHT_RED, BRIGHT_GREEN, richEmbed, normalEmbed, dmEmbed } = require('.
 
 module.exports = {
     name: 'add',
-    aliases: ['a', 'addrole', 'roleadd'],
+    aliases: ['a', 'addrole', 'roleadd', 'promote'],
     description: "Adds a role to the user mentioned",
 
     execute(client, message, args) {
@@ -22,7 +22,7 @@ module.exports = {
                 roleId = role.id;
             }
         } catch (err) {
-            console.log(err);
+            // console.log(err);
             normalEmbed(message, `:x: Wrong usage of command! \n\u200B\nSyntax: \`\`${process.env.PREFIX}add <role name/mention> <@member>\`\``, BRIGHT_RED); // Please refer to ${process.env.PREFIX}help.
             return;
         }

@@ -3,7 +3,7 @@ const { BRIGHT_RED, BRIGHT_GREEN, richEmbed, normalEmbed, dmEmbed } = require('.
 
 module.exports = {
     name: 'remove',
-    aliases: ['r', 'remrole', 'roledel', 'delrole'],
+    aliases: ['r', 'remrole', 'roledel', 'delrole', 'demote'],
     description: "Removes a role from the user provided in args",
 
     execute(client, message, args) {
