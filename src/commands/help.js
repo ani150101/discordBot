@@ -3,21 +3,23 @@ const { BRIGHT_RED, BRIGHT_GREEN, richEmbed, normalEmbed, dmEmbed } = require('.
 
 module.exports = {
     name: 'help',
-    aliases: ['h'],
+    aliases: ['h', 'commands'],
     description: "Displays list of bot commands with syntax",
 
     execute(client, message, args) {
         const helpEmbed = (message) => {
             let helpFields = [
                 // {name: `help`, value: `Get a list of bot commands.\n\`\`${process.env.PREFIX}help\`\``, inline: false},
-                {name: `add, a`, value: `Add a role to a user.\n\`\`${process.env.PREFIX}add <role name/mention> <member>\`\``, inline: false},
-                {name: `remove, r`, value: `Remove a role from user.\n\`\`${process.env.PREFIX}remove <role name/mention> <member>\`\``, inline: false},
-                {name: `user`, value: `Gets a user's information.\n\`\`${process.env.PREFIX}user / ${process.env.PREFIX}user <member>\`\``, inline: false},
-                {name: `avatar`, value: `Gets a Discord User's tag & avatar.\n\`\`${process.env.PREFIX}avatar <discord ID/@mention>\`\``, inline: false},
-                {name: `mute`, value: `Mutes a member in the server.\n\`\`${process.env.PREFIX}mute <member> <time> <reason>\`\``, inline: false},
-                {name: `unmute`, value: `Unmutes a member in the server.\n\`\`${process.env.PREFIX}ban <member>\`\``, inline: false},
-                {name: `kick`, value: `Kick a member from the server.\n\`\`${process.env.PREFIX}kick <member> <reason>\`\``, inline: false},
-                {name: `ban`, value: `Bans a member from the server.\n\`\`${process.env.PREFIX}ban <member> <reason>\`\``, inline: false},
+                {name: `add, a, addrole`, value: `Add a role to a user.\n\`\`${process.env.PREFIX}add <role name/mention> <member>\`\``, inline: true},
+                {name: `remove, r`, value: `Remove a role from user.\n\`\`${process.env.PREFIX}remove <role name/mention> <member>\`\``, inline: true},
+                {name: `user`, value: `Gets a user's information.\n\`\`${process.env.PREFIX}user / ${process.env.PREFIX}user <member>\`\``, inline: true},
+                {name: `avatar, pfp, dp`, value: `Gets a Discord User's tag & avatar.\n\`\`${process.env.PREFIX}avatar <discord ID/@mention>\`\``, inline: true},
+                {name: `mute`, value: `Mutes a member in the server.\n\`\`${process.env.PREFIX}mute <member> <time> <reason>\`\``, inline: true},
+                {name: `unmute`, value: `Unmutes a member in the server.\n\`\`${process.env.PREFIX}ban <member>\`\``, inline: true},
+                {name: `kick, k`, value: `Kick a member from the server.\n\`\`${process.env.PREFIX}kick <member> <reason>\`\``, inline: true},
+                {name: `ban, b`, value: `Bans a member from the server.\n\`\`${process.env.PREFIX}ban <member> <reason>\`\``, inline: true},
+                {name: `unban, ub`, value: `Unbans a member from the server.\n\`\`${process.env.PREFIX}unban <memberID/username> <reason>\`\``, inline: true},
+
             ]
             richEmbed(message, false, "List of Bot Commands", false, true, message.guild.iconURL(), helpFields, 'BLUE');
         }
