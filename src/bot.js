@@ -1,6 +1,6 @@
 require('dotenv').config();
 const discord = require("discord.js");  
-// const { richEmbed, normalEmbed, dmEmbed } = require('../embed.js');
+// const { BRIGHT_RED, BRIGHT_GREEN, richEmbed, normalEmbed, dmEmbed } = require('./commands/functions/embed.js'); ///////// ENABLE WHILE TESTING ///////////
 const client = new discord.Client();
 const fs = require('fs');
 client.commands = new discord.Collection();
@@ -28,10 +28,10 @@ client.on('message', (message) => {
     const args = message.content.slice(process.env.PREFIX.length).trim().split(/ +/);
     const cmdName = args.shift().toLowerCase();
 
-    if(!client.commands.has(cmdName)) return;
-    const command = client.commands.get(cmdName);
+    const command = client.commands.get(cmdName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(cmdName));
+    if(!command) return;
+    command.execute(client, message, args);
 
-    // if(client.commands.has(cmdName)) {
-        command.execute(client, message, args);
-    // }
+    //////////////////////////////////////////////////////////// TESTING COMMANDS BELOW ///////////////////////////////////////////////////////////////////////
+    
 })
