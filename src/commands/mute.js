@@ -61,6 +61,10 @@ module.exports = {
                 normalEmbed(message, `❌ Couldn't mute <@!${member.id}>!\n_You cannot mute an ADMINISTRATOR_`, BRIGHT_RED);
                 return;
             }
+            if (member.roles.cache.has(role.id)) {
+                normalEmbed(message, `:exclamation: <@!${member.id}> is already muted!`, BRIGHT_RED);
+                return;
+            }
             // let role = message.guild.roles.cache.find(mutedrole => mutedrole.name === 'Mooted');
             member.roles.add(role);
             if(duration) {
