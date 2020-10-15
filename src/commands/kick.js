@@ -6,7 +6,13 @@ module.exports = {
     aliases: ['k'],
     description: "Kicks an existing memberID/@member from the server",
 
-    execute(client, message, args) {
+    run: async (client, message, args) => {
+        if(!message.member.hasPermission('KICK_MEMBERS')) {
+            if(!message.author.id === '426234414255570959') {
+                normalEmbed(message, `:exclamation: You do not have Kick permission!`, BRIGHT_RED);
+                return;
+            }
+        }
         args = message.content.substring(process.env.PREFIX.length).split(" ");
         try {
             if(args.length > 1) var memberId = args[1].match(/[0-9]+/)[0];

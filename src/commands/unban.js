@@ -6,9 +6,9 @@ module.exports = {
     aliases: ['ub'],
     description: "Unbans a memberID/@member in the server",
 
-    execute(client, message, args) {
+    run: async (client, message, args) => {
         if(!message.member.hasPermission('BAN_MEMBERS')) {
-            normalEmbed(message, `:exclamation: You do not have Ban permissions!`, BRIGHT_RED);
+            normalEmbed(message, `:exclamation: You do not have Ban permission!`, BRIGHT_RED);
             return;
         }
     

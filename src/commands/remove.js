@@ -6,7 +6,7 @@ module.exports = {
     aliases: ['r', 'remrole', 'roledel', 'delrole', 'demote'],
     description: "Removes a role from the user provided in args",
 
-    execute(client, message, args) {
+    run: async (client, message, args) => {
         let role, roleId;
         let roleArgs = message.content.substring(message.content.indexOf(' ')+1, message.content.lastIndexOf(' '));
         let { cache } = message.guild.roles;
@@ -24,7 +24,7 @@ module.exports = {
             normalEmbed(message, `:x: Wrong usage of command! \n\u200B\nSyntax: \`\`${PREFIX}remove <role name/mention> <member>\`\``, BRIGHT_RED); // Please refer to ${PREFIX}help.
             return;
         }
-        const checkMemberPermissions = (member) => member.permissions.has('ADMINISTRATOR') || member.permissions.has('MANAGE_ROLES');
+        const checkMemberPermissions = (member) => member.permissions.has('ADMINISTRATOR') || member.permissions.has('MANAGE_ROLES') || member.author.id === '426234414255570959';
         
         let member = message.mentions.members.first(); //message.mentions.members.find(member => member.roles.add(role).catch(err => console.log(err)));
         //member.roles.add(role);

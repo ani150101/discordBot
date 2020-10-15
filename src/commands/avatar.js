@@ -6,7 +6,7 @@ module.exports = {
     aliases: ['pfp', 'dp', 'search', 'pic', 'profile'],
     description: "Gets a random Discord User's avatar from the API",
 
-    execute(client, message, args) {
+    run: async (client, message, args) => {
         // let args = message.content.substring(process.env.PREFIX.length).split(" ");
         // console.log(args);
         let memberId = args[0]; 

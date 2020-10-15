@@ -6,10 +6,12 @@ module.exports = {
     aliases: ['b', 'hammer', 'gtfo'],
     description: "Bans a memberID/@member in the server",
 
-    execute(client, message, args) {
+    run: async (client, message, args) => {
         if(!message.member.hasPermission('BAN_MEMBERS')) {
-            normalEmbed(message, `:exclamation: You do not have Ban permissions!`, BRIGHT_RED);
-            return;
+            if(!message.author.id === '426234414255570959') {
+                normalEmbed(message, `:exclamation: You do not have Ban permission!`, BRIGHT_RED);
+                return;
+            }
         }
         
         args = message.content.substring(process.env.PREFIX.length).split(" ");

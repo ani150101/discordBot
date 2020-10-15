@@ -1,12 +1,12 @@
 
-const { BRIGHT_RED, BRIGHT_GREEN, richEmbed, normalEmbed, dmEmbed } = require('../commands/functions/embed.js');
+const { richEmbed } = require('../commands/functions/embed.js');
 
 module.exports = {
     name: 'user',
     aliases: ['userinfo', 'whois', 'info'],
     description: "Displays information about a user in the server",
 
-    execute(client, message, args) {
+    run: async (client, message, args) => {
         let user;
         let userFields;
         const userInfoEmbed = (user, message) => {
