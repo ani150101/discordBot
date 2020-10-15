@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "./src/bot.js",
+  "nodemonConfig": {
+    "ignore": ["config/config.json", "README.md"] 
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ./src/bot.js"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +17,7 @@
     "discord.js": "^12.3.1",
     "dotenv": "^8.2.0",
     "jquery": "^3.5.1",
-    "nodemon": "^2.0.4"
+    "ms": "^2.1.2",
+    "nodemon": "^2.0.5"
   }
 }
